@@ -53,7 +53,7 @@ function flush (stream) {
   }
 }
 
-Stream.prototype.pause = function() {
+Stream.prototype.pause = function () {
   if (this._state === 'paused') {
     return
   }
