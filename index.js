@@ -27,9 +27,6 @@ Stream.prototype.handle = function () {
       this.capable = false
     }
   }
-  if (this.xhr.readyState === 4 && !this.paused) {
-    this.emit('end')
-  }
 }
 
 Stream.prototype.write = function () {
@@ -51,7 +48,7 @@ function flush (stream) {
     stream.offset += chunk.length
   }
 
-  if (stream.offset === stream.xhr.responseText.length) {
+  if (stream.xhr.readyState === 4 && stream.offset === stream.xhr.responseText.length) {
     stream.emit('end')
   }
 }
