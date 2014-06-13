@@ -1,6 +1,6 @@
 {
   "name": "buffered-xhr-stream",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A pausable/resumable xhr stream",
   "main": "index.js",
   "scripts": {
