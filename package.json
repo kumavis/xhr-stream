@@ -1,0 +1,25 @@
+{
+  "name": "buffered-xhr-stream",
+  "version": "0.1.0",
+  "description": "A pausable/resumable xhr stream",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SpiderStrategies/node-buffered-xhr-stream.git"
+  },
+  "keywords": [
+    "xhr",
+    "xhr-stream",
+    "stream",
+    "buffered-stream"
+  ],
+  "author": "Nathan Bowser <nathan.bowser@spiderstrategies.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SpiderStrategies/node-buffered-xhr-stream/issues"
+  },
+  "homepage": "https://github.com/SpiderStrategies/node-buffered-xhr-stream"
+}
