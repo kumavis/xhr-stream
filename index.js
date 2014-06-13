@@ -26,6 +26,12 @@ Stream.prototype.handle = function () {
     } catch (e) {
       this.capable = false
     }
+  } else if (this.xhr.readyState === 4) {
+    flush(this)
+
+    if (this.xhr.error) {
+      this.emit('error')
+    }
   }
 }
 
@@ -48,7 +54,7 @@ function flush (stream) {
     stream.offset += chunk.length
   }
 
-  if (stream.xhr.readyState === 4 && stream.offset === stream.xhr.responseText.length) {
+  if (stream.offset === stream.xhr.responseText.length) {
     stream.emit('end')
   }
 }
@@ -62,9 +68,6 @@ Stream.prototype.pause = function () {
 }
 
 Stream.prototype.resume = function () {
-  if (this._state !== 'paused') {
-    return
-  }
   this._state = 'flowing'
   flush(this)
 }
