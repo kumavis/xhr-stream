@@ -12,6 +12,7 @@ function Stream (xhr, options) {
   this.readable = true
   this.writeable = true
   this._state = 'flowing'
+  this.capable = true
   xhr.onreadystatechange = this.handle.bind(this)
   xhr.send(null)
 }
@@ -19,8 +20,12 @@ function Stream (xhr, options) {
 util.inherits(Stream, stream.Stream)
 
 Stream.prototype.handle = function () {
-  if (this.xhr.readyState === 3) {
-    this.write()
+  if (this.capable && this.xhr.readyState === 3) {
+    try {
+      this.write()
+    } catch (e) {
+      this.capable = false
+    }
   }
   if (this.xhr.readyState === 4 && !this.paused) {
     this.emit('end')
