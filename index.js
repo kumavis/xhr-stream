@@ -61,11 +61,12 @@ Stream.prototype.pause = function () {
   this.emit('pause')
 }
 
-Stream.prototype.resume = function() {
-  if (this._state === 'paused') {
-    flush(this)
+Stream.prototype.resume = function () {
+  if (this._state !== 'paused') {
+    return
   }
   this._state = 'flowing'
+  flush(this)
 }
 
 module.exports = Stream
