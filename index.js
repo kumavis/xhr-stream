@@ -8,7 +8,7 @@ function Stream (xhr, options) {
   this.xhr = xhr
   this.offset = 0
   this.paused = false
-  this.chunkSize = options.chunkSize || 1024
+  this.chunkSize = options.chunkSize || 65536
   this.readable = true
   this.writeable = true
   this._state = 'flowing'
@@ -48,7 +48,7 @@ function flush (stream) {
   if (!stream.xhr.responseText) {
     return
   }
-  while (stream.xhr.responseText.length - stream.offset > stream.chunkSize && stream._state === 'flowing') {
+  while (stream.xhr.responseText.length - stream.offset >= stream.chunkSize && stream._state === 'flowing') {
     var chunk = stream.xhr.responseText.substr(stream.offset, stream.chunkSize)
     stream.emit('data', chunk)
     stream.offset += chunk.length
