@@ -6,7 +6,7 @@ function Stream (options) {
     throw new Error('options are required')
   }
   if (!options.xhr && !options.url) {
-    throw new Error('options.xhr or options.stream is required')
+    throw new Error('options.xhr or options.url is required')
   }
 
   stream.Stream.call(this)
