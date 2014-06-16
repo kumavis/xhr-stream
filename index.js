@@ -1,11 +1,15 @@
 var stream = require('stream')
   , util = require('util')
 
-function Stream (xhr, options) {
-  options = options || {}
+function Stream (options) {
+  if (!options) {
+    throw new Error('options are required')
+  }
+  if (!options.xhr && !options.url) {
+    throw new Error('options.xhr or options.stream is required')
+  }
 
   stream.Stream.call(this)
-  this.xhr = xhr
   this.offset = 0
   this.paused = false
   this.chunkSize = options.chunkSize || 65536
@@ -13,8 +17,14 @@ function Stream (xhr, options) {
   this.writeable = true
   this._state = 'flowing'
   this.capable = true
-  xhr.onreadystatechange = this.handle.bind(this)
-  xhr.send(null)
+
+  this.xhr = options.xhr
+  if (options.url) {
+    this.xhr = new XMLHttpRequest
+    this.xhr.open('GET', options.url, true)
+  }
+  this.xhr.onreadystatechange = this.handle.bind(this)
+  this.xhr.send(null)
 }
 
 util.inherits(Stream, stream.Stream)
