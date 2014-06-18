@@ -17,6 +17,7 @@ function Stream (options) {
   this.writeable = true
   this._state = 'flowing'
   this.capable = true
+  this.downloaded = false
 
   this.xhr = options.xhr
   if (options.url) {
@@ -37,10 +38,11 @@ Stream.prototype.handle = function () {
       this.capable = false
     }
   } else if (this.xhr.readyState === 4) {
-    flush(this)
-
     if (this.xhr.error) {
       this.emit('error')
+    } else {
+      this.downloaded = true
+      flush(this)
     }
   }
 }
@@ -58,7 +60,8 @@ function flush (stream) {
   if (!stream.xhr.responseText) {
     return
   }
-  while (stream.xhr.responseText.length - stream.offset >= stream.chunkSize && stream._state === 'flowing') {
+  while (stream._state === 'flowing' && stream.xhr.responseText.length - stream.offset != 0 &&
+    (stream.downloaded || stream.xhr.responseText.length - stream.offset >= stream.chunkSize)) {
     var chunk = stream.xhr.responseText.substr(stream.offset, stream.chunkSize)
     stream.emit('data', chunk)
     stream.offset += chunk.length
