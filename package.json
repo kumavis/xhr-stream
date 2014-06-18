@@ -24,9 +24,11 @@
   "homepage": "https://github.com/SpiderStrategies/node-buffered-xhr-stream",
   "devDependencies": {
     "tape": "^2.13.3",
-    "testling": "^1.6.1"
+    "testling": "^1.6.1",
+    "concat-stream": "^1.4.6"
   },
   "testling": {
-    "files": "test.js"
+    "files": "test/test.js",
+    "server": "test/server.js"
   }
 }
