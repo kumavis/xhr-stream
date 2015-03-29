@@ -12,16 +12,12 @@
     "xmlhttprequest",
     "xhr",
     "xhr-stream",
-    "stream",
+    "stream"
   ],
   "author": "kumavis",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/SpiderStrategies/node-buffered-xhr-stream/issues"
-  },
-  "homepage": "https://github.com/SpiderStrategies/node-buffered-xhr-stream",
   "devDependencies": {
     "tape": "^2.13.3",
     "concat-stream": "^1.4.6"
-  },
+  }
 }
