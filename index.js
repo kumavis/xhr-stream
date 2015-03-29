@@ -1,88 +1,70 @@
-var stream = require('stream')
-  , util = require('util')
+var ReadableStream = require('stream').ReadableStream
+var inherits = require('util').inherits
 
-function Stream (options) {
-  if (!options) {
-    throw new Error('options are required')
-  }
-  if (!options.xhr && !options.url) {
-    throw new Error('options.xhr or options.url is required')
+module.exports = XhrStream
+
+
+inherits(XhrStream, ReadableStream)
+
+function XhrStream(opts) {
+  opts = opts || {}
+
+  // created via url
+  if (typeof opts === 'string') {
+    var url = opts
+    var xhr = new XMLHttpRequest()
+    xhr.open('GET', url, true)
+    opts = { xhr: xhr }
   }
 
-  stream.Stream.call(this)
+  // created via xhr
+  if (opts instanceof XMLHttpRequest) {
+    var xhr = opts
+    opts = { xhr: xhr }
+  }
+
+  if (!opts.xhr) {
+    throw new Error('XhrStream - must provide XHR or URL')
+  }
+
+  ReadableStream.call(this, opts)
   this.offset = 0
-  this.paused = false
-  this.chunkSize = options.chunkSize || 65536
-  this.readable = true
-  this.writeable = true
-  this._state = 'flowing'
   this.capable = true
-  this.downloaded = false
 
-  this.xhr = options.xhr
-  if (options.url) {
-    this.xhr = new XMLHttpRequest
-    this.xhr.open('GET', options.url, true)
-  }
-  this.xhr.onreadystatechange = this.handle.bind(this)
+  this.xhr = opts.xhr
+  this.xhr.onreadystatechange = this._stateChanged.bind(this)
   this.xhr.send(null)
 }
 
-util.inherits(Stream, stream.Stream)
+// the xhr data is fetched eagerly, so the `_read` hint is not meaningful
+XhrStream.prototype._read = noop
 
-Stream.prototype.handle = function () {
+XhrStream.prototype._stateChanged = function () {
   if (this.capable && this.xhr.readyState === 3) {
     try {
-      this.write()
+      this._flushResponseText()
     } catch (e) {
       this.capable = false
+      this.emit('error', new Error('Not capable of reading from XHR.'))
     }
   } else if (this.xhr.readyState === 4) {
     if (this.xhr.error) {
-      this.emit('error')
+      this.emit('error', this.xhr.error)
     } else {
-      this.downloaded = true
-      flush(this)
+      this._flushResponseText(this)
+      this.emit('end')
     }
   }
 }
 
-Stream.prototype.write = function () {
-  if (this._state === 'paused') {
-    return
-  }
-
-  // Noop Automatically writes to responseText, go ahead and flush
-  flush(this)
-}
-
-function flush (stream) {
-  if (!stream.xhr.responseText) {
-    return
-  }
-  while (stream._state === 'flowing' && stream.xhr.responseText.length - stream.offset != 0 &&
-    (stream.downloaded || stream.xhr.responseText.length - stream.offset >= stream.chunkSize)) {
-    var chunk = stream.xhr.responseText.substr(stream.offset, stream.chunkSize)
-    stream.emit('data', chunk)
-    stream.offset += chunk.length
-  }
-
-  if (stream.offset === stream.xhr.responseText.length) {
-    stream.emit('end')
+XhrStream.prototype._flushResponseText = function () {
+  var responseText = this.xhr.responseText
+  if (!responseText) return
+  while (responseText.length > this.offset) {
+    var chunk = responseText.substr(this.offset)
+    this.offset += chunk.length
+    this.push(chunk)
   }
 }
 
-Stream.prototype.pause = function () {
-  if (this._state === 'paused') {
-    return
-  }
-  this._state = 'paused'
-  this.emit('pause')
-}
-
-Stream.prototype.resume = function () {
-  this._state = 'flowing'
-  flush(this)
-}
-
-module.exports = Stream
+function noop () {}

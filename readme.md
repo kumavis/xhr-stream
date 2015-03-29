@@ -1,35 +1,28 @@
-# buffered-xhr-stream
+# xhr-stream
 
-A node stream that wraps xhr GET requests as a stream. 
+A node stream that wraps xhr GET requests as a stream.
 
-Created because the browserify node http module emits all the data as it's received, and it cannot be paused. This can cause the browser to peg the cpu if it's a large request. This module allows you to pause the stream, so it stops emitting data events. XHR responseText is buffered anyway, so when this stream is resumed, it starts emitting buffered data stored in responseText.
+### usage
 
-## USAGE
+```js
+var XhrStream = require('xhr-stream')
 
-```javascript
-var XHRStream = require('buffered-xhr-stream')
-  , xhr = new XMLHttpRequest
-
+var xhr = new XMLHttpRequest()
 xhr.open('GET', '/some-large-docs.json', true)
+var stream = new XhrStream( xhr )
 
-var stream = new XHRStream(xhr)
-  , count = 0
-
-stream.on('data', function (d) {
-  if (++count % 10 === 0) {
-    stream.pause()
-  }
-  console.log(d)
-})
-
+stream.pipe(somewhereAwesome)
 ```
 
-You can specify an optional chunk size.
-```javascript
-var XHRStream = require('buffered-xhr-stream')
-  , xhr = new XMLHttpRequest
+### options
 
-xhr.open('GET', '/some-large-docs.json', true)
+##### url
 
-var stream = new XHRStream(xhr, {chunkSize: 2048})
+You can specify a url and an XHR will be created for you.
+```js
+var stream = new XhrStream( url )
 ```
+
+### about
+
+forked from [node-buffered-xhr-stream](https://github.com/SpiderStrategies/node-buffered-xhr-stream)
