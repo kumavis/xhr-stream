@@ -1,4 +1,4 @@
-var ReadableStream = require('stream').ReadableStream
+var ReadableStream = require('stream').Readable
 var inherits = require('util').inherits
 
 module.exports = XhrStream
