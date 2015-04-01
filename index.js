@@ -52,7 +52,7 @@ XhrStream.prototype._stateChanged = function () {
       this.emit('error', this.xhr.error)
     } else {
       this._flushResponseText(this)
-      this.emit('end')
+      this.push(null)
     }
   }
 }
