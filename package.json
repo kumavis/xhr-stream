@@ -17,7 +17,7 @@
   "author": "kumavis",
   "license": "ISC",
   "devDependencies": {
-    "tape": "^2.13.3",
+    "tape": "^4.8.0",
     "concat-stream": "^1.4.6"
   }
 }
