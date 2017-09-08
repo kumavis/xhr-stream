@@ -1,5 +1,7 @@
 # xhr-stream
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kumavis/xhr-stream.svg)](https://greenkeeper.io/)
+
 A node stream that wraps xhr GET requests as a stream.
 
 ### usage
